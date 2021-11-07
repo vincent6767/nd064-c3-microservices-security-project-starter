@@ -1,0 +1,39 @@
+Docker Threat Modeling
+Given Docker's system components and the STRIDE framework, identify five potential threats that may arise.
+1. Use of --privilege flag. 
+    Docker privileged mode grants a Docker container root capabilities to all devices on the host system. Running a container in privileged mode gives it the capabilities of its host machines.
+    If this is set unintentionally for all users, then other user able to do whatever he/she wants in the host system. This threat is associated with "Elevation of privilege".
+
+2. Daemon misconfiguration
+    Daemon configuration may be tampered with a compromised client, leading to misconfiguration and vulnerabilities. This threat is asscoiated with "Tampering".
+
+3. Isolation tampering
+    This can occur when host's network namespace is shared. This is threat associated with "Spoofing".
+
+4. Over-allocated resources for Docker Daemon
+    Daemon memory for the running container may be over-allocated, e.g. allocated partition becomes full due base device size increased This threat is associated with "Denial of service".
+
+5. Daemon privilege may be escalated if a username is not defined
+    This attack surface could led to the container runs as root, which gives access to any other contianer on the same host, leading to isolation tampering. This threat is associated with "Elevation of privilege".
+
+Kubernetes Threat Modeling
+Given Kubernetes' system components and the STRIDE framework, identify five potential threats that may arise.
+
+    Kubernetes Control Plane
+    ------------------------
+1. Calls to API server could be spoofed by a malicious caller
+    This can be mitigated by ensuring all calls to the API server are over TLS, ensuring tha nonymous and basic authentication is not used. This threat is associated with "Spoofing".
+
+2. Configuration of etcd may be tampered
+    etcd configuration may be tampered with by an attacker, modifying vital system-level configurations such as pod specs. This threat is associated with "Tampering".
+
+3. Sensitive information may be exposed via the etcd key-value store
+    This can be mitigated by encrypting etcd content at rest and using TLS to access etcd only from the kube-apiserver. All other traffic should be rejected. This threat is associated with "Information Disclosure"
+
+    Kubernetes Worker Nodes
+    -----------------------
+4. Spoofed connection between API server and Kubelet
+    This can be mitigated by using kubelet uses strong encryption that doesn't have cryptographic flaws, strong TLS ciphers should be used. This threat is associated with "Spoofing".
+
+5. Sensitive information can be exposed from Kube-Proxy
+    To ensure the kube-proxy does not expose information, the `--kubeconfig` should be set to permissions 644 or less permissive. This threat is associated with "Information disclosure".
