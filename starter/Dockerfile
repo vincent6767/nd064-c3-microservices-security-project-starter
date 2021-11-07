@@ -17,4 +17,5 @@ RUN mkdir udacity \
 RUN zypper refs && zypper refresh
 
 #add local user
-USER $SEC_USER
+RUN useradd -d /home/vincent -m -s /bin/bash vincent
+USER vincent
