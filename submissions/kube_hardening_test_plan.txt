@@ -1,0 +1,10 @@
+My test plan
+1. Record all changes in cluster.yaml so we can roll back and review changes history. We use Git as the version control tool.
+2. Create a test environment that mimics the production environment. The reason is so we could capture all issues that might happen in the production readiness as soon as possible. This will ensure our changes don't negatively affect our production cluster.
+3. Set up monitoring dashboard, observability, and alerts so we could observe our test environment condition.
+4. Apply those changes into the test environment and perform either automated or manual testing to make sure all working normally, including the services.
+    a. If there are any errors, record the issues in a document and then solve them. The error document will help people who perform the same tasks in the future.
+5. Once we have made sure all is working well, set up Canary Test in the production environment. The new cluster will start receiving 5% traffic and increase by 10% periodically until 100%.
+6. Apply the changes in the production environment and monitor cluster conditions.
+    a. If we detect problems, investigate the problems and timebox. If we can't solve the issues within the timebox, quickly roll out the changes so it doesn't affect more users. We will then try to reproduce the issue again in the test environment.
+7. Once we have moved to the new cluster fully, celebrates and keeps monitor the cluster health.
