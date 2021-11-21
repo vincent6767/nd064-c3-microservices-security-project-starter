@@ -1,0 +1,14 @@
+1. Incident commander name: Vincent
+2. Executive Summary of what happened:
+    An attacker was able to get control of the cluster and run three different crypto miners were launched. Attackers are after computing resources to abuse for crypto-mining
+3. Summary of what was affected:
+    The attacker managed to run crypto miners on our system, which is undesirable. This affects the whole cluster's performance and security.
+4. Summary of the impact:
+    The CPU usage jumps into 99% utilization, which impacts all services' performance on the cluster. This also means the attacker was able to get control of the cluster and run these containers on the cluster.
+5. Summary of the remediation steps:
+    Run the following command to evict the pods:
+        `kubectl --kubeconfig kube_config_cluster.yml delete pod <pod_name> --grace-period=0 --force>`
+    Now that the prods are evicted, check the Grafana dashboard again for CPU utilization. The CPU utilization shall start to fall as the crypto mining pods are evicted.
+6. Summary of lessons learned:
+    There is no alert setup to detect CPU utilization, suspicious Network tools, and also crypto miners. To avoid this in the future, it's good to have monitoring like the dashboards we use. It would be helpful to have alerts from Falco in Grafana for events like this.
+    It's possible to use admission controllers to allow only certain images to be imported and started within the pods.
