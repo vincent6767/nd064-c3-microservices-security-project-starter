@@ -1,20 +1,20 @@
 Docker Threat Modeling
 Given Docker's system components and the STRIDE framework, identify five potential threats that may arise.
-1. Elevated privileges on docker container. 
-    Docker container with elevated privileges is a high risk potential surface as it allows the container access more things that it's needed, which will benefit attacker if they happen to get access to the containers. 
-    This threat is associated with "Elevation of privilege".
+1. Malicious images are part of the container layers. 
+    There are chances an image may be spoofed with malicious images or libraries, which expose the entire system to risks. Image layer analysis will help to detect this threat.
+    This threat is associated with "Spoofing".
 
-2. Daemon misconfiguration
-    Daemon configuration may be tampered with a compromised client, leading to misconfiguration and vulnerabilities. This threat is asscoiated with "Tampering".
+2. Daemon misconfiguration that is not legitimate
+    Daemon configuration (/etc/docker/daemon/json) may be modified by a user, leading to misconfiguration and vulnerabilities. This threat is associated with "Repudiation".
 
-3. Configuration files are modified by unknowns actor
-    This can occur if the attacker managed to access to the host or RKE cluster. This is threat associated with "Tampering".
+3. Configuration files are modified by an unknown actor
+    This can occur if the attacker managed to access the host or RKE cluster. This is a threat associated with "Tampering".
 
 4. Over-allocated resources for Docker Daemon
-    Daemon memory for the running container may be over-allocated, e.g. allocated partition becomes full due base device size increased This threat is associated with "Denial of service".
+    Daemon memory for the running container may be over-allocated, e.g. allocated partition becomes full due to base device size increased This threat is associated with "Denial of service".
 
 5. Daemon privilege may be escalated if a username is not defined
-    This attack surface could led to the container runs as root, which gives access to any other contianer on the same host, leading to isolation tampering. This threat is associated with "Elevation of privilege".
+    This attack surface could lead to the container running as root, which gives access to any other container on the same host, leading to isolation tampering. This threat is associated with the "Elevation of privilege".
 
 Kubernetes Threat Modeling
 Given Kubernetes' system components and the STRIDE framework, identify five potential threats that may arise.
@@ -22,18 +22,18 @@ Given Kubernetes' system components and the STRIDE framework, identify five pote
     Kubernetes Control Plane
     ------------------------
 1. Calls to API server could be spoofed by a malicious caller
-    This can be mitigated by ensuring all calls to the API server are over TLS, ensuring tha nonymous and basic authentication is not used. This threat is associated with "Spoofing".
+    This can be mitigated by ensuring all calls to the API server are over TLS, ensuring the anonymous and basic authentication is not used. This threat is associated with "Spoofing".
 
 2. Configuration of etcd may be tampered
     etcd configuration may be tampered with by an attacker, modifying vital system-level configurations such as pod specs. This threat is associated with "Tampering".
 
-3. Sensitive information may be exposed via the etcd key-value store
-    This can be mitigated by encrypting etcd content at rest and using TLS to access etcd only from the kube-apiserver. All other traffic should be rejected. This threat is associated with "Information Disclosure"
+3. No upper limit for memory
+    Kubernetes ships without an upper limit for setting the memory footprint. this may lead to a denial of service which could result in exhausting resources needed to run the pod, e.g. in crypto miners attack incidents. This threat is associated with "Denial of Service".
 
     Kubernetes Worker Nodes
     -----------------------
-4. Spoofed connection between API server and Kubelet
-    This can be mitigated by using kubelet uses strong encryption that doesn't have cryptographic flaws, strong TLS ciphers should be used. This threat is associated with "Spoofing".
+4. Kubelet unauthorized changes
+    To avoid this, kubelet authentication should be over TLS, ensuring the anonymous and basic authentication is not used. This threat is associated with "Repudiation".
 
 5. Sensitive information can be exposed from Kube-Proxy
     To ensure the kube-proxy does not expose information, the `--kubeconfig` should be set to permissions 644 or less permissive. This threat is associated with "Information disclosure".
@@ -42,6 +42,6 @@ Docker-bench Run Results and Analysis
 From the failed findings, select and document 3 findings from the Docker-bench results that you want to harden based on the 5 attack surface areas you identified in Step 1. At least 1 of the 3 hardened findings should be different from the ones mentioned in the exercise (i.e. 5.10, 5.14, and 5.22).
 
 These are the three failed findings I'll fix. These are based on the CIS Docker Benchmark v1.2.0
-1. 2.2 Ensure the logging level is set to 'info'. It's related with Docker Threat Model "3. Configuration files are modified by unknowns actor".
-2. 5.10 Ensure that the memory usage for container is limited (Automated). It's related with Docker threat Model "4. Over-allocated resources for Docker Daemon".
-3. 5.25 Ensure that the container is restricted from acquiring additional privileges (Automated). It's related with Docker threat model "1. Elevated privileges".
+1. 2.2 Ensure the logging level is set to 'info'. It's related to Docker Threat Model "3. Configuration files are modified by unknowns actor".
+2. 5.10 Ensure that the memory usage for the container is limited (Automated). It's related to Docker threat Model "4. Over-allocated resources for Docker Daemon".
+3. 5.25 Ensure that the container is restricted from acquiring additional privileges (Automated). It's related to the Docker threat model "1. Elevated privileges".
